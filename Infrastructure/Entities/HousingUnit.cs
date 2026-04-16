@@ -20,7 +20,7 @@ public class HousingUnit
     public Gender GenderAllowed { get; set; }
     public string Rules { get; set; }
     //public string Rating { get; set; }
-    public string Location { get; set; }
+    public string Location { get; set; } 
     public int NumberOfRooms { get; set; }
     public bool IsAvailable { get; set; }
     public virtual LandLord? LandLord { get; set; }

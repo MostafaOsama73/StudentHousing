@@ -12,7 +12,7 @@ public class Wishlist
     public Guid StudentId { get; set; }
     public Guid HousingUnitId { get; set; }
     public DateTime AddedDate { get; set; }
-    public virtual Student? Student { get; set; }
-    public virtual HousingUnit? HousingUnit { get; set; }
+    public virtual Student Student { get; set; } = null!;
+    public virtual HousingUnit HousingUnit { get; set; } = null!;
 
 }

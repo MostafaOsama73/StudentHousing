@@ -24,4 +24,6 @@ public class Student
     public virtual ICollection<Complaint>? Complaints { get; set; } 
     public virtual ICollection<Wishlist>? Wishlists { get; set; }
 
+    public virtual ICollection<Booking>? Bookings { get; set; }
+
 }

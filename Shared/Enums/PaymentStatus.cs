@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.Enumsl;
+namespace Shared.Enums;
 
 public enum PaymentStatus
 {

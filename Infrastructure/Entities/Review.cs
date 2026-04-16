@@ -18,7 +18,7 @@ public class Review
     public string? Comment { get; set; }
     public DateTime ReviewDate { get; set; }     
     
-    public HousingUnit? HousingUnit { get; set; }
-    public Student? Student { get; set; }
+    public virtual HousingUnit? HousingUnit { get; set; }
+    public virtual Student? Student { get; set; }
 
 }
