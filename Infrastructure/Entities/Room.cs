@@ -18,4 +18,6 @@ public class Room
         
     public virtual HousingUnit? HousingUnit { get; set; }
 
+    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+
 }

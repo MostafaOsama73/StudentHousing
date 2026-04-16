@@ -10,5 +10,6 @@ namespace Infrastructure.Entities;
 public class User : IdentityUser    
 {
     public bool IsDeleted { get; set; }
-    
+
+    public virtual ICollection<Notification>? Notifications { get; set; }
 }

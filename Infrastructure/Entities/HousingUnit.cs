@@ -24,4 +24,8 @@ public class HousingUnit
     public int NumberOfRooms { get; set; }
     public bool IsAvailable { get; set; }
     public virtual LandLord? LandLord { get; set; }
+
+    public virtual ICollection<Room>? Rooms { get; set; }
+    public virtual ICollection<Review>? Reviews { get; set; } 
+    public virtual ICollection<Wishlist>? WishlistedBy { get; set; }
 }

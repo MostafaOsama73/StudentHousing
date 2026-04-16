@@ -20,5 +20,8 @@ public class Student
     public string NationalId { get; set; }
  
     public virtual User? User { get; set; }
+    public virtual ICollection<Review>? Reviews { get; set; } 
+    public virtual ICollection<Complaint>? Complaints { get; set; } 
+    public virtual ICollection<Wishlist>? Wishlists { get; set; }
 
 }

@@ -19,4 +19,5 @@ public class Booking
 
     public virtual Student? Student { get; set; }
     public virtual Room? Room { get; set; }
+    public virtual Payment? Payment { get; set; }
 }
