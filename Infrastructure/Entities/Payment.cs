@@ -1,0 +1,21 @@
+﻿using Shared.Enums;
+using Shared.Enumsl;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Infrastructure.Entities;
+
+public class Payment
+{
+    public Guid PaymentId { get; set; }
+    public Guid BookingId { get; set; }
+    public decimal Amount { get; set; }
+    public PaymentMethod PaymentMethod { get; set; }
+    public PaymentStatus PaymentStatus { get; set; }
+    public DateTime PaymentDate { get; set; }
+    public string? TransactionId { get; set; }
+    public virtual Booking? Booking { get; set; }
+}

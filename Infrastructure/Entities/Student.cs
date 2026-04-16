@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -12,7 +13,7 @@ public class Student
     public Guid StudentId { get; set; }
     public string? UserId { get; set; }
     public DateTime DateOfBirth { get; set; }
-    public string Gender { get; set; }
+    public Gender Gender { get; set; }
     public string Address { get; set; }
     public string City { get; set; }
     public string PreferredArea { get; set; }
