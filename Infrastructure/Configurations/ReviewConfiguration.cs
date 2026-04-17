@@ -1,4 +1,4 @@
-﻿using Infrastructure.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -11,7 +11,6 @@ namespace Infrastructure.Configurations
 {
     internal class ReviewConfiguration : IEntityTypeConfiguration<Review>
     {
-        [Obsolete]
         public void Configure(EntityTypeBuilder<Review> R)
         {
             R.ToTable("Reviews");

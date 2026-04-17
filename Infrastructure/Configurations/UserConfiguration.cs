@@ -1,4 +1,4 @@
-﻿using Infrastructure.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -37,7 +37,7 @@ namespace Infrastructure.Configurations
                    .HasForeignKey(N => N.UserId)
                    .OnDelete(DeleteBehavior.Cascade);
 
-            U.HasQueryFilter(U => U.IsDeleted);
+            U.HasQueryFilter(U => !U.IsDeleted);
         }
     }
 }

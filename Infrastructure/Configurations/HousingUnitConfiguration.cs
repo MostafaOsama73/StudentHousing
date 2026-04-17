@@ -1,4 +1,4 @@
-﻿using Infrastructure.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -50,7 +50,7 @@ namespace Infrastructure.Configurations
 
 
             HU.HasOne(HU => HU.LandLord)
-                   .WithMany()
+                   .WithMany(L => L.HousingUnits)
                    .HasForeignKey(HU => HU.LandLordId)
                    .OnDelete(DeleteBehavior.Cascade);
 

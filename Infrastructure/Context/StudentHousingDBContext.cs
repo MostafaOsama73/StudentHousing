@@ -1,4 +1,4 @@
-﻿using Infrastructure.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,26 +10,25 @@ namespace Infrastructure.Context;
 
 public class StudentHousingDBContext : DbContext
 {
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public StudentHousingDBContext(DbContextOptions<StudentHousingDBContext> options) : base(options)
     {
-        optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=StudentHousing;Integrated Security=True;Encrypt=False;Trust Server Certificate=True");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(StudentHousingDBContext).Assembly); 
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(StudentHousingDBContext).Assembly);
     }
 
-    public DbSet<Booking> bookings { get; set; }
-    public DbSet<Complaint> complaints { get; set; }
-    public DbSet<HousingUnit> housingUnits { get; set; }
-    public DbSet<LandLord> landLords { get; set; }
-    public DbSet<Notification> notifications { get; set; }
-    public DbSet<Payment> payments { get; set; }
-    public DbSet<Review> reviews { get; set; }
-    public DbSet<Room> rooms { get; set; }
-    public DbSet<Student> students { get; set; }
-    public DbSet<User> users { get; set; }
-    public DbSet<Wishlist> wishlists { get; set; }
+    public DbSet<Booking> Bookings { get; set; }
+    public DbSet<Complaint> Complaints { get; set; }
+    public DbSet<HousingUnit> HousingUnits { get; set; }
+    public DbSet<LandLord> LandLords { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
+    public DbSet<Payment> Payments { get; set; }
+    public DbSet<Review> Reviews { get; set; }
+    public DbSet<Room> Rooms { get; set; }
+    public DbSet<Student> Students { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Wishlist> Wishlists { get; set; }
 
 }

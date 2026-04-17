@@ -1,4 +1,4 @@
-﻿using Infrastructure.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -16,7 +16,6 @@ namespace Infrastructure.Configurations
             L.HasBaseType<User>();
 
             L.Property(L => L.CompanyName)
-                   .IsRequired()
                    .HasColumnName("Company Name")
                    .HasMaxLength(150);
 

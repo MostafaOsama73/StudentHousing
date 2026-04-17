@@ -1,4 +1,4 @@
-﻿using Infrastructure.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -23,7 +23,7 @@ namespace Infrastructure.Configurations
             R.Property(R => R.NumberOfBeds)
                    .IsRequired();
 
-            R.Property(R => R.HousingUnit)
+            R.Property(R => R.HousingUnitId)
                    .IsRequired();
 
             R.Property(R => R.Price)

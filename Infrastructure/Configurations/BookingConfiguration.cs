@@ -1,4 +1,4 @@
-﻿using Infrastructure.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -45,7 +45,7 @@ namespace Infrastructure.Configurations
 
             B.HasOne(B => B.Payment)
               .WithOne(P => P.Booking)
-              .HasForeignKey<Payment>(B => B.PaymentId)
+              .HasForeignKey<Payment>(P => P.BookingId)
               .OnDelete(DeleteBehavior.Cascade);
 
             B.HasIndex(B => B.StudentId);

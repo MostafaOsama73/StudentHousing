@@ -1,4 +1,4 @@
-﻿using Infrastructure.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -22,9 +22,7 @@ namespace Infrastructure.Configurations
                    .HasMaxLength(500);
 
             builder.Property(N => N.Type)
-                   .IsRequired()
-                   .HasColumnName("Notification Type")
-                   .HasMaxLength(100);
+                   .IsRequired();
 
             builder.Property(N => N.IsSeen)
                    .HasDefaultValue(false);
