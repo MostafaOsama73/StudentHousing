@@ -1,0 +1,156 @@
+@{
+    ViewData["Title"] = "Register - Choose Account Type";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="text-center mb-5">
+                <h1 class="display-5 mb-3">
+                    <i class="fas fa-user-circle"></i> Create Your Account
+                </h1>
+                <p class="lead text-muted">Choose your account type to get started</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Student Registration Card -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-lg border-0 option-card student-card" onclick="goToRegister('student')">
+                        <div class="card-body text-center p-5">
+                            <div class="icon-circle mb-4">
+                                <i class="fas fa-graduation-cap fa-3x text-primary"></i>
+                            </div>
+                            <h3 class="card-title mb-3">Student</h3>
+                            <p class="card-text text-muted mb-4">
+                                Find your perfect housing and connect with landlords
+                            </p>
+                            <ul class="list-unstyled mb-4 text-start">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="ms-2">Search for housing</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="ms-2">Read reviews</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="ms-2">Book rooms</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="ms-2">Instant activation</span>
+                                </li>
+                            </ul>
+                            <a href="@Url.Action("RegisterStudent")" class="btn btn-primary btn-lg w-100">
+                                Register as Student
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Landlord Registration Card -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-lg border-0 option-card landlord-card" onclick="goToRegister('landlord')">
+                        <div class="card-body text-center p-5">
+                            <div class="icon-circle mb-4">
+                                <i class="fas fa-building fa-3x text-success"></i>
+                            </div>
+                            <h3 class="card-title mb-3">Landlord</h3>
+                            <p class="card-text text-muted mb-4">
+                                List your properties and manage bookings
+                            </p>
+                            <ul class="list-unstyled mb-4 text-start">
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="ms-2">List your properties</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="ms-2">Manage bookings</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="ms-2">Verify documents</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check-circle text-warning"></i>
+                                    <span class="ms-2">Requires admin approval</span>
+                                </li>
+                            </ul>
+                            <a href="@Url.Action("RegisterLandlord")" class="btn btn-success btn-lg w-100">
+                                Register as Landlord
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Already have account -->
+            <div class="text-center mt-5">
+                <p class="text-muted">
+                    Already have an account?
+                    <a href="@Url.Action("Login")" class="text-primary fw-bold">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .option-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .option-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .student-card:hover {
+        border-color: #0d6efd !important;
+    }
+
+    .landlord-card:hover {
+        border-color: #198754 !important;
+    }
+
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        background: rgba(13, 110, 253, 0.1);
+    }
+
+    .landlord-card .icon-circle {
+        background: rgba(25, 135, 84, 0.1);
+    }
+
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+    }
+
+    .btn-lg:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<script>
+function goToRegister(type) {
+    if (type === 'student') {
+        window.location.href = '@Url.Action("RegisterStudent")';
+    } else if (type === 'landlord') {
+        window.location.href = '@Url.Action("RegisterLandlord")';
+    }
+}
+</script>

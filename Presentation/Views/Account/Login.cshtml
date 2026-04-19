@@ -1,0 +1,204 @@
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4 text-primary">
+                        <i class="fas fa-sign-in-alt"></i> Welcome Back
+                    </h2>
+                    
+                    <form id="loginForm">
+                        <!-- Email Input -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold">Email Address</label>
+                            <input type="email" class="form-control form-control-lg" id="email" 
+                                   name="email" placeholder="Enter your email" required>
+                            <small class="text-muted">We'll never share your email.</small>
+                        </div>
+
+                        <!-- Password Input -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-bold">Password</label>
+                            <input type="password" class="form-control form-control-lg" id="password" 
+                                   name="password" placeholder="Enter your password" required>
+                        </div>
+
+                        <!-- Error Alert -->
+                        <div id="errorAlert" class="alert alert-danger alert-dismissible fade d-none" role="alert">
+                            <strong><i class="fas fa-exclamation-circle"></i> Error!</strong>
+                            <span id="errorMessage"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <!-- Success Alert -->
+                        <div id="successAlert" class="alert alert-success alert-dismissible fade d-none" role="alert">
+                            <strong><i class="fas fa-check-circle"></i> Success!</strong>
+                            <span id="successMessage"></span>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div id="loadingSpinner" class="d-none">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <span class="ms-2">Logging in...</span>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="button" class="btn btn-primary btn-lg w-100 mt-4" id="loginBtn" onclick="login()">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+
+                        <!-- Divider -->
+                        <hr class="my-4">
+
+                        <!-- Registration Options -->
+                        <div class="text-center">
+                            <p class="mb-3">Don't have an account?</p>
+                            <a href="@Url.Action("RegisterChoice")" class="btn btn-outline-primary btn-lg w-100 mb-2">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </a>
+                        </div>
+
+                        <!-- Forgot Password -->
+                        <div class="text-center mt-3">
+                            <a href="#" class="text-muted small">Forgot your password?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    <i class="fas fa-lock"></i> Secure login powered by JWT
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(13, 110, 253, 0.4);
+    }
+
+    .btn-outline-primary:hover {
+        transform: translateY(-2px);
+    }
+
+    #loadingSpinner {
+        text-align: center;
+        padding: 20px;
+    }
+</style>
+
+<script>
+async function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const loginBtn = document.getElementById('loginBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const errorAlert = document.getElementById('errorAlert');
+    const successAlert = document.getElementById('successAlert');
+
+    // Hide alerts
+    errorAlert.classList.add('d-none');
+    successAlert.classList.add('d-none');
+
+    // Validate inputs
+    if (!email || !password) {
+        showError('Please fill in all fields');
+        return;
+    }
+
+    // Disable button and show loading
+    loginBtn.disabled = true;
+    loadingSpinner.classList.remove('d-none');
+
+    try {
+        const response = await fetch('/api/v1/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Store JWT token
+            localStorage.setItem('token', data.token.accessToken);
+            localStorage.setItem('refreshToken', data.token.refreshToken);
+            localStorage.setItem('user', JSON.stringify(data.user));
+
+            showSuccess('Login successful! Redirecting...');
+            
+            // Redirect based on role
+            const userRoles = data.user.roles;
+            setTimeout(() => {
+                if (userRoles.includes('LandLord')) {
+                    window.location.href = '/landlord/dashboard';
+                } else if (userRoles.includes('Student')) {
+                    window.location.href = '/student/dashboard';
+                } else {
+                    window.location.href = '/';
+                }
+            }, 1500);
+        } else {
+            showError(data.message || 'Login failed');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        showError('An error occurred. Please try again.');
+    } finally {
+        loginBtn.disabled = false;
+        loadingSpinner.classList.add('d-none');
+    }
+}
+
+function showError(message) {
+    const errorAlert = document.getElementById('errorAlert');
+    const errorMessage = document.getElementById('errorMessage');
+    errorMessage.textContent = message;
+    errorAlert.classList.remove('d-none');
+}
+
+function showSuccess(message) {
+    const successAlert = document.getElementById('successAlert');
+    const successMessage = document.getElementById('successMessage');
+    successMessage.textContent = message;
+    successAlert.classList.remove('d-none');
+}
+
+// Allow Enter key to submit
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('loginForm');
+    form.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            login();
+        }
+    });
+});
+</script>

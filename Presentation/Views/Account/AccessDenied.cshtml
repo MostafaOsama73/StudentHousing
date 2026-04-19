@@ -1,0 +1,45 @@
+@{
+    ViewData["Title"] = "Access Denied";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded-4 text-center">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-lock fa-5x text-danger"></i>
+                    </div>
+
+                    <h2 class="card-title mb-3">Access Denied</h2>
+                    <p class="card-text text-muted mb-4">
+                        You don't have permission to access this page.
+                    </p>
+
+                    <p class="text-muted">
+                        If you believe this is an error, please contact support.
+                    </p>
+
+                    <div class="mt-4">
+                        <a href="/" class="btn btn-primary btn-lg">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(13, 110, 253, 0.4);
+    }
+</style>

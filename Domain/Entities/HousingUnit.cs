@@ -17,6 +17,7 @@ public class HousingUnit
     public string City { get; set; }
     public string Area { get; set; }
     public decimal Price { get; set; }
+    public string? UnitImageUrl { get; set; }
     public Gender GenderAllowed { get; set; }
     public string Rules { get; set; }
     //public string Rating { get; set; }

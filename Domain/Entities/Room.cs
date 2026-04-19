@@ -12,6 +12,7 @@ public class Room
     public Guid RoomId { get; set; }
     public Guid HousingUnitId { get; set; }
     public RoomType RoomType { get; set; }
+    public string? RoomImageUrl { get; set; }
     public int NumberOfBeds { get; set; }
     public decimal Price { get; set; }
     public bool IsAvailable { get; set; }
