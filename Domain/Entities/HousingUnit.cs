@@ -20,7 +20,9 @@ public class HousingUnit
     public string? UnitImageUrl { get; set; }
     public Gender GenderAllowed { get; set; }
     public string Rules { get; set; }
-    //public string Rating { get; set; }
+    public bool IsDeleted { get; set; } = false;  
+    public double? AverageRating { get; set; } 
+    public int ReviewCount { get; set; } = 0;  
     public string Location { get; set; } 
     public int NumberOfRooms { get; set; }
     public bool IsAvailable { get; set; }

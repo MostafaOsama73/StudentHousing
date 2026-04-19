@@ -16,6 +16,7 @@ public class Booking
     public DateTime EndDate { get; set; }
     public decimal TotalPrice { get; set; }
     public BookingStatus BookingStatus { get; set; }
+    public bool IsDeleted { get; set; } = false;  
 
     public virtual Student? Student { get; set; }
     public virtual Room? Room { get; set; }
