@@ -18,7 +18,7 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         #region User Mappings
-        
+
         // User to UserResponse
         CreateMap<User, UserResponse>()
             .ForMember(dest => dest.Roles, opt => opt.Ignore()); // Roles are handled separately in service
@@ -31,6 +31,20 @@ public class MappingProfile : Profile
         CreateMap<StudentRegisterRequest, Student>()
             .ForMember(dest => dest.StudentId, opt => opt.Ignore()) // Generated in service
             .ForMember(dest => dest.UserId, opt => opt.Ignore()) // Set in service
+            .ForMember(dest => dest.User, opt => opt.Ignore())
+            .ForMember(dest => dest.Bookings, opt => opt.Ignore())
+            .ForMember(dest => dest.Reviews, opt => opt.Ignore())
+            .ForMember(dest => dest.Complaints, opt => opt.Ignore())
+            .ForMember(dest => dest.Wishlists, opt => opt.Ignore());
+
+        // Student to StudentResponse
+        CreateMap<Student, StudentResponse>()
+            .ForMember(dest => dest.VerificationStatus, opt => opt.MapFrom(src => src.VerificationStatus));
+
+        CreateMap<StudentUpdateRequest, Student>()
+            .ForMember(dest => dest.StudentId, opt => opt.Ignore())
+            .ForMember(dest => dest.UserId, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.User, opt => opt.Ignore())
             .ForMember(dest => dest.Bookings, opt => opt.Ignore())
             .ForMember(dest => dest.Reviews, opt => opt.Ignore())

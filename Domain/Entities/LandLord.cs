@@ -16,6 +16,14 @@ public class LandLord
     public string PropertyOwnerShipProof { get; set; }
     public string VerificationStatus { get; set; }
     
+    // Audit timestamps
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    
+    // Approval tracking
+    public DateTime? ApprovedAt { get; set; }
+    public string? RejectionReason { get; set; }
+    
     public virtual User? User { get; set; }
     public virtual ICollection<HousingUnit>? HousingUnits { get; set; }
 }

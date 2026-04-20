@@ -1,3 +1,5 @@
+using Shared.Enums;
+
 namespace Business.Models.Requests;
 
 
@@ -19,17 +21,23 @@ public class StudentRegisterRequest : RegisterRequest
 /// <summary>
 /// Request model for updating student profile
 /// </summary>
-public class UpdateStudentRequest
+public class StudentUpdateRequest
 {
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
+    public Guid StudentId { get; set; }
     public DateTime? DateOfBirth { get; set; }
-    public int? Gender { get; set; }
+    public Gender? Gender { get; set; }
     public string? Address { get; set; }
     public string? City { get; set; }
     public string? PreferredArea { get; set; }
-    public string? PhoneNumber { get; set; }
+    public string? NationalId { get; set; }
 }
+
+public class StudentDeleteRequest
+{
+    public Guid StudentId { get; set; }
+    public bool IsDeleted { get; set; }
+}
+
 
 /// <summary>
 /// Request model for filtering/searching students
@@ -38,7 +46,7 @@ public class StudentFilterRequest
 {
     public string? City { get; set; }
     public string? PreferredArea { get; set; }
-    public int? Gender { get; set; }
+    public Gender? Gender { get; set; }
     public DateTime? DateOfBirthFrom { get; set; }
     public DateTime? DateOfBirthTo { get; set; }
     public int PageNumber { get; set; } = 1;
@@ -50,6 +58,7 @@ public class StudentFilterRequest
 /// </summary>
 public class ChangePasswordRequest
 {
+    public Guid StudentId { get; set; }
     public string? CurrentPassword { get; set; }
     public string? NewPassword { get; set; }
     public string? ConfirmPassword { get; set; }

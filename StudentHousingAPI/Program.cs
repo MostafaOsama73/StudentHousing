@@ -15,7 +15,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add DbContext
 builder.Services.AddDbContext<StudentHousingDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null)));
 
 #region JWT Settings
 // Add Identity
@@ -79,6 +84,8 @@ builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 // Add Services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IDataSeedingService, DataSeedingService>();
 #endregion
 
 #region Repositories
@@ -153,10 +160,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors("AllowPresentation");
-
-app.MapControllers();
-
-app.Run();
 
 app.MapControllers();
 
