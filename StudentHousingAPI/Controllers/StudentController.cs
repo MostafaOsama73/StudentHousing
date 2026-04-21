@@ -43,11 +43,12 @@ public class StudentController : BaseController
     }
 
     [HttpPost("GetAllFilterd")]
-    [ProducesResponseType(typeof(IEnumerable<StudentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(StudentIndexedResponse), StatusCodes.Status200OK)]
 
     public async Task<IActionResult> GetAllFilterd(StudentFilterRequest filter)
     {
         var response = await studentService.GetAllFilterd(filter);
+
         return Ok(response);
     }
 

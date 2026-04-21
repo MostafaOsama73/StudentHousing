@@ -87,7 +87,6 @@ public class ContainerConfiguration
         // Add Services
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IDataSeedingService, DataSeedingService>();
         #endregion
 
 

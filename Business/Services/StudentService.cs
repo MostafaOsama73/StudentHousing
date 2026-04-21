@@ -19,7 +19,7 @@ public interface IStudentService
     Task<StudentResponse> Update(StudentUpdateRequest request);
     Task<StudentResponse> GetById(Guid id);
     Task<IEnumerable<StudentResponse>> GetAll();
-    Task<IEnumerable<StudentResponse>> GetAllFilterd(StudentFilterRequest filter);
+    Task<StudentIndexedResponse> GetAllFilterd(StudentFilterRequest filter);
     Task<bool> ChangePassword(ChangePasswordRequest request, string userId);
     Task<StudentResponse> SetDeletion(StudentDeleteRequest request);
 }
@@ -77,20 +77,29 @@ public class StudentService : IStudentService
         return response;
     }
 
-    public async Task<IEnumerable<StudentResponse>> GetAllFilterd(StudentFilterRequest filter)
+    public async Task<StudentIndexedResponse> GetAllFilterd(StudentFilterRequest filter)
     {
-        var students = await studentRepository.GetAll(true).Where(a => (filter.City == null || a.City == filter.City)
+        var students = studentRepository.GetAll(true).Where(a => (filter.City == null || a.City == filter.City)
                                                                 && (filter.PreferredArea == null || a.PreferredArea == filter.PreferredArea)
                                                                 && (filter.Gender == null || a.Gender == filter.Gender)
                                                                 && (filter.DateOfBirthFrom == null || a.DateOfBirth >= filter.DateOfBirthFrom)
-                                                                && (filter.DateOfBirthTo == null || a.DateOfBirth <= filter.DateOfBirthTo))
-                                                     .Skip((filter.PageNumber - 1) * filter.PageSize)
-                                                     .Take(filter.PageSize)
-                                                     .ToListAsync();
+                                                                && (filter.DateOfBirthTo == null || a.DateOfBirth <= filter.DateOfBirthTo));
+                                                     
 
-        var response = mapper.Map<IEnumerable<StudentResponse>>(students);
+        var totalRecords = await students.CountAsync();
 
-        return response;
+        students = students.Skip(filter.PageNumber * filter.PageSize)
+                           .Take(filter.PageSize);
+
+        var data = mapper.Map<List<StudentResponse>>(await students.ToListAsync());
+
+        return new StudentIndexedResponse
+        {
+            PageSize = filter.PageSize,
+            PageIndex = filter.PageNumber,
+            TotalRecords = totalRecords,
+            Records = data
+        };
     }
 
 

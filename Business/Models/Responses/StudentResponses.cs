@@ -26,3 +26,7 @@ public class StudentResponse
     public VerificationStatus? VerificationStatus { get; set; }  
 
 }
+
+public class StudentIndexedResponse : GenericIndexedResponse<StudentResponse>
+{
+}
