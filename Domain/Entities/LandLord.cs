@@ -10,6 +10,7 @@ namespace Domain.Entities;
 public class LandLord
 {
     public Guid LandLordId { get; set; }
+    public string FullName { get; set; }
     public string? UserId { get; set; }
     public string? CompanyName { get; set; }
     public string NationalId { get; set; }

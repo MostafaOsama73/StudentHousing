@@ -9,6 +9,7 @@ namespace Business.Models.Requests;
 /// </summary>
 public class StudentRegisterRequest : RegisterRequest
 {
+    public string FullName { get; set; }
     public DateTime DateOfBirth { get; set; }
     public int Gender { get; set; } // Use enum value (0, 1, 2)
     public string? Address { get; set; }
@@ -24,6 +25,7 @@ public class StudentRegisterRequest : RegisterRequest
 public class StudentUpdateRequest
 {
     public Guid StudentId { get; set; }
+    public string? FullName { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public Gender? Gender { get; set; }
     public string? Address { get; set; }

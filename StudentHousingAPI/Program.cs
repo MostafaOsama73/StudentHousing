@@ -92,6 +92,7 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<ILandLordRepository, LandLordRepository>();
 #endregion
 
+
 // Add Controllers
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -101,9 +102,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowPresentation", builder =>
     {
-        builder.WithOrigins("http://localhost:5000") // Presentation URL
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        builder.AllowAnyOrigin()   // Opens it up completely
+               .AllowAnyMethod()   // Allows GET, POST, PUT, DELETE
+               .AllowAnyHeader();  // Allows Authorization headers
     });
 });
 
@@ -154,10 +155,11 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowPresentation");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors("AllowPresentation");
 
 app.MapControllers();
 

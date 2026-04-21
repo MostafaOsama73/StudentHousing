@@ -11,6 +11,7 @@ public class StudentResponse
 {
     public Guid StudentId { get; set; }
     public string? UserId { get; set; }
+    public string FullName { get; set; }
     public DateTime DateOfBirth { get; set; }
     public Gender Gender { get; set; }
     public string Address { get; set; }

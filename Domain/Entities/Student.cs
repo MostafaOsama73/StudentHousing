@@ -11,6 +11,7 @@ namespace Domain.Entities;
 public class Student
 {
     public Guid StudentId { get; set; }
+    public string FullName { get; set; }
     public string? UserId { get; set; }
     public DateTime DateOfBirth { get; set; }
     public Gender Gender { get; set; }
