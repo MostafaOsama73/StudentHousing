@@ -13,8 +13,6 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<LandLord> L)
         {
-            L.HasBaseType<User>();
-
             L.Property(L => L.CompanyName)
                    .HasColumnName("Company Name")
                    .HasMaxLength(150);

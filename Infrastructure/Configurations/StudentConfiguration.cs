@@ -13,8 +13,6 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Student> S)
         {
-            S.HasBaseType<User>();
-
             S.Property(S => S.DateOfBirth)
                    .IsRequired();
 
