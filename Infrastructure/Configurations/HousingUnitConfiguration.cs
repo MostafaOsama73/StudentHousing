@@ -45,8 +45,8 @@ namespace Infrastructure.Configurations
                    .IsRequired()
                    .HasMaxLength(1000);
 
-            HU.Property(HU => HU.IsAvailable)
-                   .HasDefaultValue(true);
+            HU.Property(HU => HU.AvailabilityStatus)
+                   .HasDefaultValue(Shared.Enums.PropertyStatus.Available);
 
 
             HU.HasOne(HU => HU.LandLord)

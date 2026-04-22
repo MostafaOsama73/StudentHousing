@@ -1,44 +1,15 @@
+using Business.Interfaces;
 using Business.Models.Helpers;
 using Business.Models.Requests;
 using Business.Models.Responses;
 using Domain.Entities;
-using Infrastructure.Repositories;
+using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
+using Shared.Enums;
 
 namespace Business.Services;
-
-/// <summary>
-/// Interface for authentication operations
-/// </summary>
-public interface IAuthService
-{
-    /// <summary>
-    /// Authenticates user and returns JWT token
-    /// </summary>
-    Task<AuthResponse> Login(LoginRequest request);
-
-    /// <summary>
-    /// Registers a new student user
-    /// </summary>
-    Task<AuthResponse> RegisterStudentAsync(StudentRegisterRequest request);
-
-    /// <summary>
-    /// Registers a new landlord user
-    /// </summary>
-    Task<AuthResponse> RegisterLandLordAsync(LandLordRegisterRequest request);
-
-    /// <summary>
-    /// Refreshes expired access token
-    /// </summary>
-    Task<AuthResponse> RefreshTokenAsync(RefreshTokenRequest request);
-
-    /// <summary>
-    /// Logs out user (invalidates token)
-    /// </summary>
-    Task<bool> LogoutAsync(string token);
-}
 
 /// <summary>
 /// Service for handling authentication operations
@@ -81,12 +52,12 @@ public class AuthService : IAuthService
         if (user == null)
             throw new ApplicationException(ErrorMessageHelper.UserNotFound);
 
-        if (user.IsDeleted)            
+        if (user.IsDeleted)
             throw new ApplicationException(ErrorMessageHelper.UserIsDeleted);
 
-        if (!user.IsActive)
-            throw new ApplicationException("Your account is not activated yet. Please contact administrator.");
-                   
+        if (user.Status == UserStatus.Rejected)
+            throw new ApplicationException("Your account has been rejected. Please contact administrator.");
+
         var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
 
         if (!passwordValid)                           
@@ -158,6 +129,7 @@ public class AuthService : IAuthService
             PhoneNumber = request.PhoneNumber,
             IsDeleted = false,
             IsActive = true,  // Students are active by default
+            Status = UserStatus.Pending,  // Students need approval by default
             ProfileImage = request.ProfileImage  // Set profile image
         };
 
@@ -228,6 +200,7 @@ public class AuthService : IAuthService
             PhoneNumber = request.PhoneNumber,
             IsDeleted = false,
             IsActive = false,  // Landlords are inactive by default, must be activated by admin
+            Status = UserStatus.Pending,  // Landlords need approval by default
             ProfileImage = request.ProfileImage  // Set profile image
         };
 
@@ -273,6 +246,66 @@ public class AuthService : IAuthService
                 PhoneNumber = user.PhoneNumber,
                 Roles = roles.ToArray(),
                 LandLordId = landlord.LandLordId
+            }
+        };
+    }
+
+    /// <summary>
+    /// Registers a new admin
+    /// </summary>
+    public async Task<AuthResponse> RegisterAdminAsync(RegisterRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ApplicationException(ErrorMessageHelper.InvalidCredentials);
+
+        if (request.Password != request.ConfirmPassword)
+            throw new ApplicationException("Passwords do not match");
+
+        var existingUser = await _userManager.FindByEmailAsync(request.Email);
+        if (existingUser != null)
+            throw new ApplicationException(ErrorMessageHelper.UserAlreadyExists);
+
+        var user = new User
+        {
+            UserName = request.Email,
+            Email = request.Email,
+            PhoneNumber = request.PhoneNumber,
+            IsDeleted = false,
+            IsActive = true,  // Admins are active by default
+            Status = UserStatus.Approved  // Admins are auto-approved
+        };
+
+        var createResult = await _userManager.CreateAsync(user, request.Password);
+        if (!createResult.Succeeded)
+        {
+            var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+            throw new ApplicationException($"User creation failed: {errors}");
+        }
+
+        await _userManager.AddToRoleAsync(user, "Admin");
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
+        var refreshToken = await _tokenService.GenerateRefreshTokenAsync();
+
+        _logger.LogInformation($"Admin registered successfully: {user.Email}");
+
+        return new AuthResponse
+        {
+            Success = true,
+            Message = "Admin registered successfully",
+            Token = new TokenResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                ExpiresIn = 18000 // 5 hours in seconds
+            },
+            User = new UserResponse
+            {
+                Id = user.Id,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Roles = roles.ToArray()
             }
         };
     }
@@ -343,10 +376,57 @@ public class AuthService : IAuthService
     /// </summary>
     public async Task<bool> LogoutAsync(string token)
     {
-        if (string.IsNullOrWhiteSpace(token))
-            throw new ApplicationException("Token is required");
-
-        _logger.LogInformation("User logged out successfully");
+        _logger.LogInformation($"User logged out");
         return true;
+    }
+
+    /// <summary>
+    /// Approves a user account
+    /// </summary>
+    public async Task<bool> ApproveUserAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            _logger.LogWarning($"User not found: {userId}");
+            return false;
+        }
+
+        user.Status = UserStatus.Approved;
+        var result = await _userManager.UpdateAsync(user);
+        
+        if (result.Succeeded)
+        {
+            _logger.LogInformation($"User account approved: {user.Email}");
+            return true;
+        }
+
+        _logger.LogWarning($"Failed to approve user account: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        return false;
+    }
+
+    /// <summary>
+    /// Rejects a user account
+    /// </summary>
+    public async Task<bool> RejectUserAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            _logger.LogWarning($"User not found: {userId}");
+            return false;
+        }
+
+        user.Status = UserStatus.Rejected;
+        var result = await _userManager.UpdateAsync(user);
+        
+        if (result.Succeeded)
+        {
+            _logger.LogInformation($"User account rejected: {user.Email}");
+            return true;
+        }
+
+        _logger.LogWarning($"Failed to reject user account: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        return false;
     }
 }

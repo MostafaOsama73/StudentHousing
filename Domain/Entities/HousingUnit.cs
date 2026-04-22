@@ -25,7 +25,7 @@ public class HousingUnit
     public int ReviewCount { get; set; } = 0;  
     public string Location { get; set; } 
     public int NumberOfRooms { get; set; }
-    public bool IsAvailable { get; set; }
+    public PropertyStatus AvailabilityStatus { get; set; } = PropertyStatus.Available;
     public virtual LandLord? LandLord { get; set; }
 
     public virtual ICollection<Room>? Rooms { get; set; }

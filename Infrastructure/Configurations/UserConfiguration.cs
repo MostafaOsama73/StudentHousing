@@ -32,6 +32,14 @@ namespace Infrastructure.Configurations
             U.Property(U => U.IsDeleted)
                    .HasDefaultValue(false);
 
+            // Add unique constraint on PhoneNumber to prevent duplicate phone numbers across all user types (Student, Landlord, Admin)
+            U.Property(u => u.PhoneNumber)
+                   .IsRequired(false)
+                   .HasMaxLength(20);
+            U.HasIndex(u => u.PhoneNumber)
+                   .IsUnique()
+                   .HasFilter("[PhoneNumber] IS NOT NULL");
+
             U.HasMany(U => U.Notifications)
                    .WithOne(N => N.User)
                    .HasForeignKey(N => N.UserId)
