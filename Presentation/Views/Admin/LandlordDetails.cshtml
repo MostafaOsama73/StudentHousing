@@ -1,0 +1,38 @@
+@model Domain.Entities.LandLord
+
+@{
+    ViewData["Title"] = "Landlord Details";
+}
+
+<div class="container mt-4">
+    <h1>Landlord Details</h1>
+    
+    <div class="mb-3">
+        <a asp-action="Landlords" class="btn btn-secondary">Back to Landlords</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Landlord ID</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.LandLordId)</dd>
+
+                <dt class="col-sm-3">Company Name</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.CompanyName)</dd>
+
+                <dt class="col-sm-3">National ID</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.NationalId)</dd>
+
+                <dt class="col-sm-3">Verification Status</dt>
+                <dd class="col-sm-9">
+                    <span class="badge @(Model.VerificationStatus == "Approved" ? "bg-success" : Model.VerificationStatus == "Rejected" ? "bg-danger" : "bg-warning")">
+                        @Html.DisplayFor(model => model.VerificationStatus)
+                    </span>
+                </dd>
+
+                <dt class="col-sm-3">Property Ownership Proof</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.PropertyOwnerShipProof)</dd>
+            </dl>
+        </div>
+    </div>
+</div>

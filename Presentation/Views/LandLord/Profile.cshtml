@@ -1,0 +1,96 @@
+@model Presentation.Models.LandLordProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">My Profile</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Message"] != null)
+                    {
+                        <div class="alert alert-info">
+                            @TempData["Message"]
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <strong>Account Status:</strong>
+                        @if (Model.Status == Shared.Enums.UserStatus.Approved)
+                        {
+                            <span class="badge bg-success">Approved</span>
+                        }
+                        else if (Model.Status == Shared.Enums.UserStatus.Pending)
+                        {
+                            <span class="badge bg-warning">Pending Approval</span>
+                        }
+                        else if (Model.Status == Shared.Enums.UserStatus.Rejected)
+                        {
+                            <span class="badge bg-danger">Rejected</span>
+                        }
+                    </div>
+
+                    <form asp-action="Profile" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="CompanyName" class="form-label">Company Name</label>
+                            <input asp-for="CompanyName" class="form-control" />
+                            <span asp-validation-for="CompanyName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ProfileImage" class="form-label">Profile Image URL</label>
+                            <input asp-for="ProfileImage" class="form-control" />
+                            <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                        </div>
+
+                        <hr class="my-4">
+                        <h5 class="mb-3">Verification Data</h5>
+                        <p class="text-muted">Changing verification data will require admin approval and your account will be set to pending status.</p>
+
+                        <div class="mb-3">
+                            <label asp-for="NationalId" class="form-label">National ID</label>
+                            <input asp-for="NationalId" class="form-control" />
+                            <span asp-validation-for="NationalId" class="text-danger"></span>
+                            <small class="text-warning">Changing National ID will require admin approval</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PropertyOwnerShipProof" class="form-label">Property Ownership Proof</label>
+                            <input asp-for="PropertyOwnerShipProof" class="form-control" />
+                            <span asp-validation-for="PropertyOwnerShipProof" class="text-danger"></span>
+                            <small class="text-warning">Changing Property Ownership Proof will require admin approval</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                            <a asp-action="MyUnits" class="btn btn-secondary">My Units</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
