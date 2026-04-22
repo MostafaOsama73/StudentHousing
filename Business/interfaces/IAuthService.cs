@@ -37,4 +37,14 @@ public interface IAuthService
     /// Logs out user (invalidates token)
     /// </summary>
     Task<bool> LogoutAsync(string token);
+
+    /// <summary>
+    /// Approves a user account
+    /// </summary>
+    Task<bool> ApproveUserAsync(string userId);
+
+    /// <summary>
+    /// Rejects a user account
+    /// </summary>
+    Task<bool> RejectUserAsync(string userId);
 }
