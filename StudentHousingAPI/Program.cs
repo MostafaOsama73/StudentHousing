@@ -10,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using Domain.Entities;
 using Infrastructure.Repositories;
 using Business.Mappers;
+using Business.Interfaces;
+using Infrastructure.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
