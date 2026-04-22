@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Shared.Enums;
 
 namespace Infrastructure.Data;
 
@@ -13,7 +14,7 @@ public static class DbInitializer
     {
         using var scope = serviceProvider.CreateScope();
         var services = scope.ServiceProvider;
-        
+
         try
         {
             var context = services.GetRequiredService<StudentHousingDBContext>();
@@ -54,7 +55,7 @@ public static class DbInitializer
     {
         // Check if admin user already exists
         var adminUser = await userManager.FindByEmailAsync("admin@studenthousing.com");
-        
+
         if (adminUser == null)
         {
             adminUser = new User
@@ -63,11 +64,12 @@ public static class DbInitializer
                 Email = "admin@studenthousing.com",
                 PhoneNumber = "+1234567890",
                 IsActive = true,
-                IsDeleted = false
+                IsDeleted = false,
+                Status = UserStatus.Approved
             };
 
             var result = await userManager.CreateAsync(adminUser, "Admin@123");
-            
+
             if (result.Succeeded)
             {
                 // Assign Admin role
@@ -78,6 +80,12 @@ public static class DbInitializer
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new ApplicationException($"Failed to create admin user: {errors}");
             }
+        }
+        else if (adminUser.Status != UserStatus.Approved)
+        {
+            // Update status if admin user exists but is not approved
+            adminUser.Status = UserStatus.Approved;
+            await userManager.UpdateAsync(adminUser);
         }
     }
 }
