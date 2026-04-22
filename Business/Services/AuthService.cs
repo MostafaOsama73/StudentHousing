@@ -124,7 +124,7 @@ public class AuthService : IAuthService
 
         var user = new User
         {
-            UserName = request.FullName,
+            UserName = request.Email,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
             IsDeleted = false,
@@ -195,7 +195,7 @@ public class AuthService : IAuthService
 
         var user = new User
         {
-            UserName = request.FullName,
+            UserName = request.Email,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
             IsDeleted = false,
