@@ -1,5 +1,5 @@
 namespace Business.Models.Requests;
-
+using Shared.Enums;
 
 /// <summary>
 /// Request model for student registration
@@ -8,7 +8,7 @@ namespace Business.Models.Requests;
 public class StudentRegisterRequest : RegisterRequest
 {
     public DateTime DateOfBirth { get; set; }
-    public int Gender { get; set; } // Use enum value (0, 1, 2)
+    public Gender Gender { get; set; } // Use enum value (Male, Female)
     public string? Address { get; set; }
     public string? City { get; set; }
     public string? PreferredArea { get; set; }
@@ -24,7 +24,7 @@ public class UpdateStudentRequest
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public DateTime? DateOfBirth { get; set; }
-    public int? Gender { get; set; }
+    public Gender? Gender { get; set; }
     public string? Address { get; set; }
     public string? City { get; set; }
     public string? PreferredArea { get; set; }
@@ -38,7 +38,7 @@ public class StudentFilterRequest
 {
     public string? City { get; set; }
     public string? PreferredArea { get; set; }
-    public int? Gender { get; set; }
+    public Gender? Gender { get; set; }
     public DateTime? DateOfBirthFrom { get; set; }
     public DateTime? DateOfBirthTo { get; set; }
     public int PageNumber { get; set; } = 1;
