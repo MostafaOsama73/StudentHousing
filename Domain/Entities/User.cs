@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,6 +21,7 @@ public class User : IdentityUser
 
     public bool IsActive { get; set; }
     public string? ProfileImage { get; set; }
+    public UserStatus Status { get; set; } = UserStatus.Pending;
     public virtual List<Notification> Notifications { get; set; } = null!;
 }
 
