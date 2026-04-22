@@ -1,93 +1,268 @@
 @model Presentation.Models.StudentHousingUnitViewModel
 
 @{
-    ViewData["Title"] = "Housing Units";
+    ViewData["Title"] = "Available Housing";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <h1>Available Housing Units</h1>
+<style>
+    body { background: #f0f4f8; }
 
-    <div class="mb-3">
-        <a asp-action="Index" class="btn btn-secondary">Back to Profile</a>
-    </div>
+    .page-hero {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 0 0 20px 20px;
+    }
 
-    <form asp-action="HousingUnits" method="get" class="mb-3">
-        <div class="row">
-            <div class="col-md-3">
-                <input type="text" name="search" class="form-control" placeholder="Search..." value="@Model.Search" />
-            </div>
-            <div class="col-md-2">
-                <input type="text" name="city" class="form-control" placeholder="City" value="@Model.City" />
-            </div>
-            <div class="col-md-2">
-                <input type="number" name="minPrice" class="form-control" placeholder="Min Price" value="@Model.MinPrice" />
-            </div>
-            <div class="col-md-2">
-                <input type="number" name="maxPrice" class="form-control" placeholder="Max Price" value="@Model.MaxPrice" />
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary">Filter</button>
-            </div>
-            <div class="col-md-1">
-                <a asp-action="HousingUnits" class="btn btn-outline-secondary">Clear</a>
-            </div>
+    .page-hero h1 { font-size: 2rem; font-weight: 700; }
+    .page-hero p { opacity: .8; }
+
+    .filter-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,.08);
+        margin-bottom: 2rem;
+    }
+
+    .unit-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,.08);
+        transition: transform .25s ease, box-shadow .25s ease;
+        height: 100%;
+        border: none;
+    }
+
+    .unit-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 40px rgba(0,0,0,.15);
+    }
+
+    .unit-card .card-header-img {
+        background: linear-gradient(135deg, #2d6a9f, #1e3a5f);
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+    }
+
+    .price-badge {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: .4rem .9rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: .9rem;
+        display: inline-block;
+    }
+
+    .btn-details {
+        background: linear-gradient(135deg, #2d6a9f, #1e3a5f);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: .4rem 1rem;
+        font-size: .85rem;
+        font-weight: 600;
+        transition: opacity .2s;
+    }
+
+    .btn-details:hover { opacity: .85; color: white; }
+
+    .btn-book {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: .4rem 1rem;
+        font-size: .85rem;
+        font-weight: 600;
+        transition: opacity .2s;
+    }
+
+    .btn-book:hover { opacity: .85; color: white; }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    }
+
+    .empty-state i { font-size: 4rem; color: #ccc; margin-bottom: 1rem; }
+
+    .pagination .page-link {
+        border-radius: 8px;
+        margin: 0 2px;
+        color: #2d6a9f;
+        border-color: #dee2e6;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #2d6a9f, #1e3a5f);
+        border-color: transparent;
+    }
+</style>
+
+<!-- Hero -->
+<div class="page-hero">
+    <div class="container d-flex align-items-center justify-content-between">
+        <div>
+            <h1><i class="fas fa-building me-2"></i>Available Housing Units</h1>
+            <p class="mb-0">Find your perfect student accommodation</p>
         </div>
-    </form>
+        <a asp-action="Profile" class="btn btn-light btn-sm px-4 fw-bold">
+            <i class="fas fa-user-circle me-1"></i> My Profile
+        </a>
+    </div>
+</div>
 
-    <div class="row">
-        @foreach (var item in Model.HousingUnits)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">@Html.DisplayFor(modelItem => item.City) - @Html.DisplayFor(modelItem => item.Area)</h6>
-                        <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
-                        <p class="card-text"><strong>Price: $@Html.DisplayFor(modelItem => item.Price) / month</strong></p>
-                        <p class="card-text"><small class="text-muted">Landlord: @Html.DisplayFor(modelItem => item.LandLord.CompanyName)</small></p>
-                        <a asp-action="HousingUnitDetails" asp-route-id="@item.HousingUnitId" class="btn btn-info btn-sm">Details</a>
-                        <a asp-action="BookHousingUnit" asp-route-id="@item.HousingUnitId" class="btn btn-primary btn-sm">Book Now</a>
-                    </div>
+<div class="container">
+
+    <!-- Filter Card -->
+    <div class="filter-card">
+        <form asp-action="HousingUnits" method="get">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">SEARCH</label>
+                    <input type="text" name="search" class="form-control" placeholder="Search by title, description…" value="@Model.Search" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold text-muted">CITY</label>
+                    <input type="text" name="city" class="form-control" placeholder="e.g. Cairo" value="@Model.City" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold text-muted">MIN PRICE</label>
+                    <input type="number" name="minPrice" class="form-control" placeholder="0" value="@Model.MinPrice" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold text-muted">MAX PRICE</label>
+                    <input type="number" name="maxPrice" class="form-control" placeholder="Any" value="@Model.MaxPrice" />
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="col-md-1">
+                    <a asp-action="HousingUnits" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-times"></i>
+                    </a>
                 </div>
             </div>
+        </form>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <small class="text-muted fw-bold">
+            Showing <strong>@Model.HousingUnits.Count()</strong> of <strong>@Model.TotalCount</strong> units
+        </small>
+    </div>
+
+    <!-- Cards Grid -->
+    @if (!Model.HousingUnits.Any())
+    {
+        <div class="empty-state">
+            <i class="fas fa-home"></i>
+            <h4 class="text-muted">No housing units found</h4>
+            <p class="text-muted">Try adjusting your filters or clearing the search.</p>
+            <a asp-action="HousingUnits" class="btn btn-primary mt-2">Clear Filters</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model.HousingUnits)
+            {
+                <div class="col-md-4">
+                    <div class="unit-card card">
+                        <div class="card-header-img">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="fw-bold mb-1">@item.Title</h5>
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-map-marker-alt me-1"></i>@item.City — @item.Area
+                            </p>
+                            <p class="text-muted small flex-grow-1" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                @item.Description
+                            </p>
+                            <div class="d-flex align-items-center justify-content-between mt-3 mb-3">
+                                <span class="price-badge">EGP @item.Price.ToString("N0") / mo</span>
+                                @if (!string.IsNullOrEmpty(item.LandLord?.CompanyName))
+                                {
+                                    <small class="text-muted"><i class="fas fa-user-tie me-1"></i>@item.LandLord.CompanyName</small>
+                                }
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a asp-action="HousingUnitDetails" asp-route-id="@item.HousingUnitId" class="btn-details btn flex-grow-1 text-center">
+                                    <i class="fas fa-eye me-1"></i>Details
+                                </a>
+                                <a asp-action="BookHousingUnit" asp-route-id="@item.HousingUnitId" class="btn-book btn flex-grow-1 text-center">
+                                    <i class="fas fa-calendar-check me-1"></i>Book
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="mt-4 d-flex justify-content-center" aria-label="Page navigation">
+                <ul class="pagination">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="HousingUnits"
+                               asp-route-pageNumber="@(Model.CurrentPage - 1)"
+                               asp-route-pageSize="@Model.PageSize"
+                               asp-route-search="@Model.Search"
+                               asp-route-city="@Model.City"
+                               asp-route-minPrice="@Model.MinPrice"
+                               asp-route-maxPrice="@Model.MaxPrice">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                    }
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="HousingUnits"
+                               asp-route-pageNumber="@i"
+                               asp-route-pageSize="@Model.PageSize"
+                               asp-route-search="@Model.Search"
+                               asp-route-city="@Model.City"
+                               asp-route-minPrice="@Model.MinPrice"
+                               asp-route-maxPrice="@Model.MaxPrice">@i</a>
+                        </li>
+                    }
+                    @if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="HousingUnits"
+                               asp-route-pageNumber="@(Model.CurrentPage + 1)"
+                               asp-route-pageSize="@Model.PageSize"
+                               asp-route-search="@Model.Search"
+                               asp-route-city="@Model.City"
+                               asp-route-minPrice="@Model.MinPrice"
+                               asp-route-maxPrice="@Model.MaxPrice">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
         }
-    </div>
-
-    <nav aria-label="Page navigation">
-        <ul class="pagination">
-            @if (Model.HasPreviousPage)
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-action="HousingUnits" asp-route-pageNumber="@(Model.CurrentPage - 1)" 
-                       asp-route-pageSize="@Model.PageSize" asp-route-search="@Model.Search" 
-                       asp-route-city="@Model.City" asp-route-minPrice="@Model.MinPrice" 
-                       asp-route-maxPrice="@Model.MaxPrice">Previous</a>
-                </li>
-            }
-
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                    <a class="page-link" asp-action="HousingUnits" asp-route-pageNumber="@i" 
-                       asp-route-pageSize="@Model.PageSize" asp-route-search="@Model.Search" 
-                       asp-route-city="@Model.City" asp-route-minPrice="@Model.MinPrice" 
-                       asp-route-maxPrice="@Model.MaxPrice">@i</a>
-                </li>
-            }
-
-            @if (Model.HasNextPage)
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-action="HousingUnits" asp-route-pageNumber="@(Model.CurrentPage + 1)" 
-                       asp-route-pageSize="@Model.PageSize" asp-route-search="@Model.Search" 
-                       asp-route-city="@Model.City" asp-route-minPrice="@Model.MinPrice" 
-                       asp-route-maxPrice="@Model.MaxPrice">Next</a>
-                </li>
-            }
-        </ul>
-    </nav>
-
-    <div class="mt-3">
-        Showing @Model.HousingUnits.Count() of @Model.TotalCount housing units
-    </div>
+    }
 </div>

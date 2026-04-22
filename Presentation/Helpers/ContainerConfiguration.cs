@@ -1,4 +1,4 @@
-﻿using Business.Interfaces;
+using Business.Interfaces;
 using Business.Mappers;
 using Business.Models.Settings;
 using Business.Services;
@@ -6,11 +6,7 @@ using Domain.Entities;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 namespace Presentation.Helpers;
 
@@ -31,38 +27,20 @@ public class ContainerConfiguration
         .AddEntityFrameworkStores<StudentHousingDBContext>()
         .AddDefaultTokenProviders();
 
-        // Configure JWT Settings
+        // JwtSettings is still needed by TokenService even though we don't use JWT auth here
         var jwtSettings = new JwtSettings();
         configuration.GetSection("JwtSettings").Bind(jwtSettings);
         services.AddSingleton(jwtSettings);
 
         // Add AutoMapper
         services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
-        // Add Authentication (Cookies + JWT for MVC)
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        })
-        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+
+        // Configure the Identity Cookie paths
+        services.ConfigureApplicationCookie(options =>
         {
             options.LoginPath = "/Account/Login";
             options.LogoutPath = "/Account/Logout";
             options.AccessDeniedPath = "/Account/AccessDenied";
-        })
-        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
-                ValidateIssuer = true,
-                ValidIssuer = jwtSettings.Issuer,
-                ValidateAudience = true,
-                ValidAudience = jwtSettings.Audience,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
         });
 
         // Add Authorization
@@ -83,6 +61,7 @@ public class ContainerConfiguration
         // Add Repositories
         services.AddScoped<IStudentRepository, StudentRepository>();
         services.AddScoped<ILandLordRepository, LandLordRepository>();
+        services.AddScoped<IHousingUnitRepository, HousingUnitRepository>();
         #endregion
 
         #region Services

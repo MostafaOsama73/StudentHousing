@@ -2,117 +2,278 @@
 
 @{
     ViewData["Title"] = "My Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">My Profile</h4>
-                </div>
-                <div class="card-body">
-                    @if (TempData["Message"] != null)
-                    {
-                        <div class="alert alert-info">
-                            @TempData["Message"]
-                        </div>
-                    }
+<style>
+    body { background: #f0f4f8; }
 
-                    <div class="mb-3">
-                        <strong>Account Status:</strong>
-                        @if (Model.Status == Shared.Enums.UserStatus.Approved)
-                        {
-                            <span class="badge bg-success">Approved</span>
-                        }
-                        else if (Model.Status == Shared.Enums.UserStatus.Pending)
-                        {
-                            <span class="badge bg-warning">Pending Approval</span>
-                        }
-                        else if (Model.Status == Shared.Enums.UserStatus.Rejected)
-                        {
-                            <span class="badge bg-danger">Rejected</span>
-                        }
-                    </div>
+    .profile-hero {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
+        padding: 2.5rem 0 4rem;
+        color: white;
+        margin-bottom: -3rem;
+    }
 
-                    <form asp-action="Profile" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    .profile-hero h1 { font-size: 1.8rem; font-weight: 700; }
 
-                        <div class="mb-3">
-                            <label asp-for="UserName" class="form-label">User Name</label>
-                            <input asp-for="UserName" class="form-control" />
-                            <span asp-validation-for="UserName" class="text-danger"></span>
-                        </div>
+    .avatar-circle {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.25);
+        border: 4px solid rgba(255,255,255,.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label">Email</label>
-                            <input asp-for="Email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
+    .avatar-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
-                            <input asp-for="PhoneNumber" class="form-control" />
-                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                        </div>
+    .profile-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 40px rgba(0,0,0,.12);
+        padding: 2.5rem;
+        position: relative;
+        z-index: 1;
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
-                            <input asp-for="DateOfBirth" class="form-control" type="date" />
-                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-                        </div>
+    .section-title {
+        font-size: .7rem;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #6c757d;
+        margin-bottom: 1.2rem;
+        padding-bottom: .5rem;
+        border-bottom: 2px solid #f0f4f8;
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="Gender" class="form-label">Gender</label>
-                            <select asp-for="Gender" class="form-select">
-                                <option value="">Select Gender</option>
-                                <option value="0">Male</option>
-                                <option value="1">Female</option>
-                            </select>
-                            <span asp-validation-for="Gender" class="text-danger"></span>
-                        </div>
+    .form-label {
+        font-weight: 600;
+        font-size: .85rem;
+        color: #444;
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="Address" class="form-label">Address</label>
-                            <input asp-for="Address" class="form-control" />
-                            <span asp-validation-for="Address" class="text-danger"></span>
-                        </div>
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1.5px solid #e0e7ef;
+        padding: .6rem 1rem;
+        font-size: .95rem;
+        transition: border-color .2s, box-shadow .2s;
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="City" class="form-label">City</label>
-                            <input asp-for="City" class="form-control" />
-                            <span asp-validation-for="City" class="text-danger"></span>
-                            <small class="text-warning">Changing city will require admin approval</small>
-                        </div>
+    .form-control:focus, .form-select:focus {
+        border-color: #2d6a9f;
+        box-shadow: 0 0 0 3px rgba(45,106,159,.15);
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="PreferredArea" class="form-label">Preferred Area</label>
-                            <input asp-for="PreferredArea" class="form-control" />
-                            <span asp-validation-for="PreferredArea" class="text-danger"></span>
-                            <small class="text-warning">Changing preferred area will require admin approval</small>
-                        </div>
+    .form-control[readonly] {
+        background: #f8fafc;
+        color: #6c757d;
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="NationalId" class="form-label">National ID</label>
-                            <input asp-for="NationalId" class="form-control" />
-                            <span asp-validation-for="NationalId" class="text-danger"></span>
-                            <small class="text-warning">Changing National ID will require admin approval</small>
-                        </div>
+    .warning-note {
+        font-size: .78rem;
+        color: #e67e22;
+        margin-top: .3rem;
+        display: flex;
+        align-items: center;
+        gap: .4rem;
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="ProfileImage" class="form-label">Profile Image URL</label>
-                            <input asp-for="ProfileImage" class="form-control" />
-                            <span asp-validation-for="ProfileImage" class="text-danger"></span>
-                        </div>
+    .btn-save {
+        background: linear-gradient(135deg, #2d6a9f, #1e3a5f);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: .75rem 2.5rem;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: opacity .2s, transform .15s;
+    }
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Update Profile</button>
-                            <a asp-action="HousingUnits" class="btn btn-secondary">Back to Housing Units</a>
-                        </div>
-                    </form>
-                </div>
+    .btn-save:hover { opacity: .9; transform: translateY(-1px); color: white; }
+
+    .btn-housing {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: .75rem 2rem;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: opacity .2s, transform .15s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .btn-housing:hover { opacity: .9; transform: translateY(-1px); color: white; }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        padding: .4rem 1rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: .85rem;
+    }
+
+    .status-approved { background: #d4edda; color: #155724; }
+    .status-pending  { background: #fff3cd; color: #856404; }
+    .status-rejected { background: #f8d7da; color: #721c24; }
+
+    .info-alert {
+        background: #e8f4fd;
+        border: 1px solid #bee3f8;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        font-size: .88rem;
+        color: #1a5276;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<!-- Hero Banner -->
+<div class="profile-hero">
+    <div class="container">
+        <div class="d-flex align-items-center gap-4">
+            <div class="avatar-circle">
+                @if (!string.IsNullOrEmpty(Model.ProfileImage))
+                {
+                    <img src="@Model.ProfileImage" alt="Profile" />
+                }
+                else
+                {
+                    <i class="fas fa-user-graduate"></i>
+                }
+            </div>
+            <div>
+                <h1 class="mb-1">@(Model.UserName ?? "Student")</h1>
+                <p class="mb-2 opacity-75"><i class="fas fa-envelope me-1"></i>@Model.Email</p>
+                @if (Model.Status == Shared.Enums.UserStatus.Approved)
+                {
+                    <span class="status-badge status-approved"><i class="fas fa-check-circle"></i> Approved</span>
+                }
+                else if (Model.Status == Shared.Enums.UserStatus.Pending)
+                {
+                    <span class="status-badge status-pending"><i class="fas fa-clock"></i> Pending Approval</span>
+                }
+                else if (Model.Status == Shared.Enums.UserStatus.Rejected)
+                {
+                    <span class="status-badge status-rejected"><i class="fas fa-times-circle"></i> Rejected</span>
+                }
             </div>
         </div>
+    </div>
+</div>
+
+<div class="container pb-5" style="max-width:800px;">
+    <div class="profile-card mt-0">
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="info-alert mb-3">
+                <i class="fas fa-info-circle me-2"></i>@TempData["Message"]
+            </div>
+        }
+
+        <form asp-action="Profile" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3"></div>
+            <input type="hidden" asp-for="StudentId" />
+
+            <!-- Account Info -->
+            <p class="section-title"><i class="fas fa-id-card me-2"></i>Account Information</p>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label asp-for="UserName" class="form-label">Username</label>
+                    <input asp-for="UserName" class="form-control" placeholder="Your username" />
+                    <span asp-validation-for="UserName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label">Email Address</label>
+                    <input asp-for="Email" class="form-control" placeholder="your@email.com" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                    <input asp-for="PhoneNumber" class="form-control" placeholder="+20 1XX XXX XXXX" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                    <input asp-for="DateOfBirth" class="form-control" type="date" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Gender" class="form-label">Gender</label>
+                    <select asp-for="Gender" class="form-select">
+                        <option value="">Select Gender</option>
+                        <option value="0">Male</option>
+                        <option value="1">Female</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <!-- Location Info -->
+            <p class="section-title"><i class="fas fa-map-marker-alt me-2"></i>Location & Preferences</p>
+            <div class="row g-3 mb-4">
+                <div class="col-md-12">
+                    <label asp-for="Address" class="form-label">Street Address</label>
+                    <input asp-for="Address" class="form-control" placeholder="Your street address" />
+                    <span asp-validation-for="Address" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="City" class="form-label">City</label>
+                    <input asp-for="City" class="form-control" placeholder="Cairo, Alexandria…" />
+                    <div class="warning-note"><i class="fas fa-exclamation-triangle"></i> Changing city requires admin re-approval</div>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PreferredArea" class="form-label">Preferred Area</label>
+                    <input asp-for="PreferredArea" class="form-control" placeholder="e.g. Nasr City" />
+                    <div class="warning-note"><i class="fas fa-exclamation-triangle"></i> Changing area requires admin re-approval</div>
+                </div>
+            </div>
+
+            <!-- Verification Info -->
+            <p class="section-title"><i class="fas fa-shield-alt me-2"></i>Verification Details</p>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label asp-for="NationalId" class="form-label">National ID</label>
+                    <input asp-for="NationalId" class="form-control" placeholder="Your national ID number" />
+                    <div class="warning-note"><i class="fas fa-exclamation-triangle"></i> Changing National ID requires admin re-approval</div>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ProfileImage" class="form-label">Profile Image URL <span class="text-muted fw-normal">(optional)</span></label>
+                    <input asp-for="ProfileImage" class="form-control" placeholder="https://…" />
+                    <span asp-validation-for="ProfileImage" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-3 flex-wrap pt-2">
+                <button type="submit" class="btn-save btn">
+                    <i class="fas fa-save me-2"></i>Save Changes
+                </button>
+                <a asp-action="HousingUnits" class="btn-housing">
+                    <i class="fas fa-building"></i> Browse Housing
+                </a>
+            </div>
+        </form>
+
     </div>
 </div>
 

@@ -13,7 +13,98 @@
                     </h2>
                     <p class="text-center text-muted mb-4">Join our community and find your perfect housing</p>
 
-                    <form id="studentRegisterForm">
+                    <form id="studentRegisterForm" asp-action="RegisterStudent" asp-controller="Account" method="post">
+                        <input type="hidden" name="ProfileImage" id="ProfileImageHidden" />
+                        <div class="row">
+                            <!-- Email -->
+                            <div class="col-md-12 mb-3">
+                                <label for="email" class="form-label fw-bold">Email Address *</label>
+                                <input type="email" class="form-control form-control-lg" id="email" 
+                                       name="email" placeholder="your@email.com" required>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="col-md-12 mb-3">
+                                <label for="phoneNumber" class="form-label fw-bold">Phone Number *</label>
+                                <input type="tel" class="form-control form-control-lg" id="phoneNumber" 
+                                       name="phoneNumber" placeholder="+20 1XXX XXXXXX" required>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label fw-bold">Password *</label>
+                                <input type="password" class="form-control form-control-lg" id="password" 
+                                       name="password" placeholder="Min 6 characters" required>
+                                <small class="text-muted d-block mt-2">
+                                    <i class="fas fa-info-circle"></i> Must contain uppercase, lowercase, and number
+                                </small>
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="col-md-6 mb-3">
+                                <label for="confirmPassword" class="form-label fw-bold">Confirm Password *</label>
+                                <input type="password" class="form-control form-control-lg" id="confirmPassword" 
+                                       name="confirmPassword" placeholder="Confirm password" required>
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="col-md-6 mb-3">
+                                <label for="dateOfBirth" class="form-label fw-bold">Date of Birth *</label>
+                                <input type="date" class="form-control form-control-lg" id="dateOfBirth" 
+                                       name="dateOfBirth" required>
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="col-md-6 mb-3">
+                                <label for="gender" class="form-label fw-bold">Gender *</label>
+                                <select class="form-select form-select-lg" id="gender" name="gender" required>
+                                    <option value="">-- Select Gender --</option>
+                                    <option value="0">Male</option>
+                                    <option value="1">Female</option>
+                                    <option value="2">Other</option>
+                                </select>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-md-12 mb-3">
+                                <label for="address" class="form-label fw-bold">Address *</label>
+                                <input type="text" class="form-control form-control-lg" id="address" 
+                                       name="address" placeholder="Street address" required>
+                            </div>
+
+                            <!-- City -->
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label fw-bold">City *</label>
+                                <input type="text" class="form-control form-control-lg" id="city" 
+                                       name="city" placeholder="Cairo, Alexandria, etc." required>
+                            </div>
+
+                            <!-- Preferred Area -->
+                            <div class="col-md-6 mb-3">
+                                <label for="preferredArea" class="form-label fw-bold">Preferred Area *</label>
+                                <input type="text" class="form-control form-control-lg" id="preferredArea" 
+                                       name="preferredArea" placeholder="e.g. Nasr City, Heliopolis" required>
+                            </div>
+
+                            <!-- National ID -->
+                            <div class="col-md-12 mb-3">
+                                <label for="nationalId" class="form-label fw-bold">National ID *</label>
+                                <input type="text" class="form-control form-control-lg" id="nationalId" 
+                                       name="nationalId" placeholder="Your national ID number" required>
+                            </div>
+
+                            <!-- Profile Image -->
+                            <div class="col-md-12 mb-3">
+                                <label for="profileImage" class="form-label fw-bold">Profile Picture (Optional)</label>
+                                <div class="input-group">
+                                    <input type="file" class="form-control form-control-lg" id="profileImage" 
+                                           name="profileImage" accept="image/*">
+                                    <span class="input-group-text">Upload</span>
+                                </div>
+                                <small class="text-muted d-block mt-2">
+                                    <i class="fas fa-info-circle"></i> Max 5MB, JPG/PNG recommended
+                                </small>
+                        <input type="hidden" name="ProfileImage" id="ProfileImageHidden" />
                         <div class="row">
                             <!-- Email -->
                             <div class="col-md-12 mb-3">
@@ -111,23 +202,7 @@
 
                             <!-- Alerts -->
                             <div class="col-md-12">
-                                <div id="errorAlert" class="alert alert-danger alert-dismissible fade d-none" role="alert">
-                                    <strong><i class="fas fa-exclamation-circle"></i> Error!</strong>
-                                    <span id="errorMessage"></span>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-
-                                <div id="successAlert" class="alert alert-success alert-dismissible fade d-none" role="alert">
-                                    <strong><i class="fas fa-check-circle"></i> Success!</strong>
-                                    <span id="successMessage"></span>
-                                </div>
-
-                                <div id="loadingSpinner" class="d-none text-center mb-3">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Loading...</span>
-                                    </div>
-                                    <span class="ms-2">Creating your account...</span>
-                                </div>
+                                <div asp-validation-summary="All" class="text-danger fw-bold mb-3"></div>
                             </div>
 
                             <!-- Submit Button -->
@@ -177,35 +252,21 @@
 </style>
 
 <script>
-async function registerStudent() {
+function registerStudent() {
     const form = document.getElementById('studentRegisterForm');
-    const registerBtn = document.getElementById('registerBtn');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const errorAlert = document.getElementById('errorAlert');
-    const successAlert = document.getElementById('successAlert');
     const profileImageInput = document.getElementById('profileImage');
 
-    // Collect form data
-    const formData = {
-        email: document.getElementById('email').value,
-        phoneNumber: document.getElementById('phoneNumber').value,
-        password: document.getElementById('password').value,
-        confirmPassword: document.getElementById('confirmPassword').value,
-        dateOfBirth: document.getElementById('dateOfBirth').value,
-        gender: parseInt(document.getElementById('gender').value),
-        address: document.getElementById('address').value,
-        city: document.getElementById('city').value,
-        preferredArea: document.getElementById('preferredArea').value,
-        nationalId: document.getElementById('nationalId').value,
-        profileImage: null
-    };
+    // Trigger HTML5 validation
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
 
-    // Hide alerts
-    errorAlert.classList.add('d-none');
-    successAlert.classList.add('d-none');
-
-    // Validate inputs
-    if (!validateForm(formData)) {
+    // Additional validation (e.g. password match)
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    if (password !== confirmPassword) {
+        alert("Passwords do not match");
         return;
     }
 
@@ -215,109 +276,29 @@ async function registerStudent() {
         
         // Validate file size (5MB max)
         if (file.size > 5 * 1024 * 1024) {
-            showError('Image file must be less than 5MB');
+            alert('Image file must be less than 5MB');
             return;
         }
 
         // Validate file type
         if (!file.type.startsWith('image/')) {
-            showError('Please select a valid image file');
+            alert('Please select a valid image file');
             return;
         }
 
         // Convert file to Base64
         const reader = new FileReader();
         reader.onload = function(e) {
-            formData.profileImage = e.target.result;
-            submitRegistration(formData, registerBtn, loadingSpinner);
+            document.getElementById('ProfileImageHidden').value = e.target.result;
+            form.submit();
         };
         reader.onerror = function() {
-            showError('Error reading image file');
+            alert('Error reading image file');
         };
         reader.readAsDataURL(file);
     } else {
-        submitRegistration(formData, registerBtn, loadingSpinner);
+        form.submit();
     }
-}
-
-async function submitRegistration(formData, registerBtn, loadingSpinner) {
-    // Disable button and show loading
-    registerBtn.disabled = true;
-    loadingSpinner.classList.remove('d-none');
-
-    try {
-        const response = await fetch('/api/v1/auth/register-student', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            // Store JWT token
-            localStorage.setItem('token', data.token.accessToken);
-            localStorage.setItem('refreshToken', data.token.refreshToken);
-            localStorage.setItem('user', JSON.stringify(data.user));
-
-            showSuccess('Account created successfully! Redirecting to dashboard...');
-            
-            setTimeout(() => {
-                window.location.href = '/student/dashboard';
-            }, 2000);
-        } else {
-            showError(data.message || 'Registration failed');
-        }
-    } catch (error) {
-        console.error('Registration error:', error);
-        showError('An error occurred. Please try again.');
-    } finally {
-        registerBtn.disabled = false;
-        loadingSpinner.classList.add('d-none');
-    }
-}
-
-function validateForm(data) {
-    if (!data.email || !data.password || !data.confirmPassword) {
-        showError('Please fill in all required fields');
-        return false;
-    }
-
-    if (data.password !== data.confirmPassword) {
-        showError('Passwords do not match');
-        return false;
-    }
-
-    if (data.password.length < 6) {
-        showError('Password must be at least 6 characters');
-        return false;
-    }
-
-    const emailRegex = new RegExp("^[^\\s@@]+@@[^\\s@@]+\\.[^\\s@@]+$");
-    if (!emailRegex.test(data.email)) {
-        showError('Please enter a valid email address');
-        return false;
-    }
-
-    return true;
-}
-
-function showError(message) {
-    const errorAlert = document.getElementById('errorAlert');
-    const errorMessage = document.getElementById('errorMessage');
-    errorMessage.textContent = message;
-    errorAlert.classList.remove('d-none');
-    window.scrollTo(0, 0);
-}
-
-function showSuccess(message) {
-    const successAlert = document.getElementById('successAlert');
-    const successMessage = document.getElementById('successMessage');
-    successMessage.textContent = message;
-    successAlert.classList.remove('d-none');
-    window.scrollTo(0, 0);
 }
 
 // Image preview on file selection
