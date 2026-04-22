@@ -1,11 +1,6 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Configurations
 {
@@ -13,9 +8,14 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<LandLord> L)
         {
+            L.ToTable("LandLords");
+            
+            L.HasKey(L => L.LandLordId);
+
             L.Property(L => L.CompanyName)
                    .HasColumnName("Company Name")
-                   .HasMaxLength(150);
+                   .HasMaxLength(150)
+                   .IsRequired(false);
 
             L.Property(L => L.NationalId)
                    .IsRequired()
@@ -25,9 +25,42 @@ namespace Infrastructure.Configurations
                    .IsRequired()
                    .HasMaxLength(250);
 
+            // Verification status
             L.Property(L => L.VerificationStatus)
                    .IsRequired()
-                   .HasMaxLength(50);
+                   .HasMaxLength(50)
+                   .HasConversion<string>();
+
+            // Timestamp columns
+            L.Property(L => L.CreatedAt)
+                   .IsRequired()
+                   .HasDefaultValueSql("GETUTCDATE()");
+
+            L.Property(L => L.UpdatedAt)
+                   .IsRequired(false);
+
+            L.Property(L => L.ApprovedAt)
+                   .IsRequired(false);
+
+            L.Property(L => L.RejectionReason)
+                   .HasMaxLength(500)
+                   .IsRequired(false);
+
+            // One-to-One relationship with User
+            L.HasOne(L => L.User)
+                   .WithOne()
+                   .HasForeignKey<LandLord>(L => L.UserId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            // Collections
+            L.HasMany(L => L.HousingUnits)
+                   .WithOne(HU => HU.LandLord)
+                   .HasForeignKey(HU => HU.LandLordId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes for performance
+            L.HasIndex(L => L.UserId).IsUnique();
+            L.HasIndex(L => L.NationalId).IsUnique();
         }
     }
 }

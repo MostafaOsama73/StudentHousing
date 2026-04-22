@@ -18,7 +18,7 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         #region User Mappings
-        
+
         // User to UserResponse
         CreateMap<User, UserResponse>()
             .ForMember(dest => dest.Roles, opt => opt.Ignore()); // Roles are handled separately in service
@@ -37,7 +37,24 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Complaints, opt => opt.Ignore())
             .ForMember(dest => dest.Wishlists, opt => opt.Ignore());
 
-        // Student to StudentRegisterRequest (reverse if needed)
+        // Student to StudentResponse
+        CreateMap<Student, StudentResponse>()
+            .ForMember(dest => dest.VerificationStatus, opt => opt.MapFrom(src => src.VerificationStatus));
+
+        // StudentUpdateRequest to Student
+        CreateMap<StudentUpdateRequest, Student>()
+            // 1. Put all your specific ignores FIRST
+            .ForMember(dest => dest.StudentId, opt => opt.Ignore())
+            .ForMember(dest => dest.UserId, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.User, opt => opt.Ignore())
+            .ForMember(dest => dest.Bookings, opt => opt.Ignore())
+            .ForMember(dest => dest.Reviews, opt => opt.Ignore())
+            .ForMember(dest => dest.Complaints, opt => opt.Ignore())
+            .ForMember(dest => dest.Wishlists, opt => opt.Ignore())
+            // 2. Put ForAllMembers at the VERY END of the chain!
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
         CreateMap<Student, StudentRegisterRequest>()
             .ForMember(dest => dest.Email, opt => opt.Ignore())
             .ForMember(dest => dest.PhoneNumber, opt => opt.Ignore())

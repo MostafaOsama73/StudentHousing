@@ -11,6 +11,7 @@ namespace Domain.Entities;
 public class Student
 {
     public Guid StudentId { get; set; }
+    public string FullName { get; set; }
     public string? UserId { get; set; }
     public DateTime DateOfBirth { get; set; }
     public Gender Gender { get; set; }
@@ -18,6 +19,14 @@ public class Student
     public string City { get; set; }
     public string PreferredArea { get; set; }
     public string NationalId { get; set; }
+    
+    // Audit timestamps
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    
+    // Verification properties
+    public bool IsVerified { get; set; } = false;
+    public VerificationStatus? VerificationStatus { get; set; }  // Pending, Approved, Rejected
  
     public virtual User? User { get; set; }
     public virtual ICollection<Booking>? Bookings { get; set; }

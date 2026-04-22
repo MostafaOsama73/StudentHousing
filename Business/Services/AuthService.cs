@@ -124,7 +124,7 @@ public class AuthService : IAuthService
 
         var user = new User
         {
-            UserName = request.Email,
+            UserName = request.FullName,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
             IsDeleted = false,
@@ -169,6 +169,7 @@ public class AuthService : IAuthService
             User = new UserResponse
             {
                 Id = user.Id,
+                FullName = request.FullName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 Roles = roles.ToArray(),
@@ -194,7 +195,7 @@ public class AuthService : IAuthService
 
         var user = new User
         {
-            UserName = request.Email,
+            UserName = request.FullName,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
             IsDeleted = false,
@@ -240,6 +241,7 @@ public class AuthService : IAuthService
             User = new UserResponse
             {
                 Id = user.Id,
+                FullName = request.FullName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 Roles = roles.ToArray(),

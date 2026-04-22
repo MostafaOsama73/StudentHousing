@@ -15,7 +15,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add DbContext
 builder.Services.AddDbContext<StudentHousingDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null)));
 
 #region JWT Settings
 // Add Identity
@@ -79,12 +84,14 @@ builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 // Add Services
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
 #endregion
 
 #region Repositories
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<ILandLordRepository, LandLordRepository>();
 #endregion
+
 
 // Add Controllers
 builder.Services.AddControllers();
@@ -95,9 +102,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowPresentation", builder =>
     {
-        builder.WithOrigins("http://localhost:5000") // Presentation URL
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        builder.AllowAnyOrigin()   // Opens it up completely
+               .AllowAnyMethod()   // Allows GET, POST, PUT, DELETE
+               .AllowAnyHeader();  // Allows Authorization headers
     });
 });
 
@@ -141,22 +148,18 @@ app.Use(async (context, next) =>
 #endregion
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowPresentation");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors("AllowPresentation");
-
-app.MapControllers();
-
-app.Run();
 
 app.MapControllers();
 
