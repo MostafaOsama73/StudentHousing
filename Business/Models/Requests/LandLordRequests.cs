@@ -7,6 +7,7 @@ namespace Business.Models.Requests;
 /// </summary>
 public class LandLordRegisterRequest : RegisterRequest
 {
+    public string FullName { get; set; }
     public string? CompanyName { get; set; }
     public string? NationalId { get; set; }
     public string? PropertyOwnerShipProof { get; set; }
@@ -18,8 +19,7 @@ public class LandLordRegisterRequest : RegisterRequest
 /// </summary>
 public class UpdateLandLordRequest
 {
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
+    public string FullName { get; set; }
     public string? CompanyName { get; set; }
     public string? PhoneNumber { get; set; }
 }
