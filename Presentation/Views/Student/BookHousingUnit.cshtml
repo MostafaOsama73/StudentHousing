@@ -1,0 +1,58 @@
+@model Presentation.Models.BookingViewModel
+
+@{
+    ViewData["Title"] = "Book Housing Unit";
+}
+
+<div class="container mt-4">
+    <h1>Book Housing Unit</h1>
+    
+    @if (Model.HousingUnit != null)
+    {
+        <div class="alert alert-info">
+            <h5>@Model.HousingUnit.Title</h5>
+            <p>@Model.HousingUnit.City - @Model.HousingUnit.Area</p>
+            <p><strong>Price: $@Model.HousingUnit.Price / month</strong></p>
+        </div>
+    }
+
+    <div class="mb-3">
+        <a asp-action="HousingUnitDetails" asp-route-id="@Model.HousingUnitId" class="btn btn-secondary">Back to Details</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="BookHousingUnit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="HousingUnitId" />
+                
+                <div class="form-group mb-3">
+                    <label asp-for="StartDate" class="control-label">Start Date</label>
+                    <input asp-for="StartDate" class="form-control" type="date" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="EndDate" class="control-label">End Date</label>
+                    <input asp-for="EndDate" class="form-control" type="date" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
+
+                @if (Model.TotalPrice.HasValue)
+                {
+                    <div class="alert alert-success">
+                        <strong>Total Price: $@Model.TotalPrice.Value</strong>
+                    </div>
+                }
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-lg">Confirm Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

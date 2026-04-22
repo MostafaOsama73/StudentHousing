@@ -1,0 +1,53 @@
+@model IEnumerable<Domain.Entities.HousingUnit>
+
+@{
+    ViewData["Title"] = "My Units";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>My Housing Units</h1>
+        <a asp-action="Profile" class="btn btn-secondary">Back to Profile</a>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["Message"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <p>You don't have any housing units yet.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var unit in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow">
+                        @if (!string.IsNullOrEmpty(unit.UnitImageUrl))
+                        {
+                            <img src="@unit.UnitImageUrl" class="card-img-top" alt="@unit.Title" style="height: 200px; object-fit: cover;">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@unit.Title</h5>
+                            <p class="card-text">
+                                <strong>Location:</strong> @unit.City - @unit.Area<br />
+                                <strong>Price:</strong> $@unit.Price / month<br />
+                                <strong>Status:</strong> @unit.AvailabilityStatus
+                            </p>
+                            <div class="d-flex gap-2">
+                                <a asp-action="EditUnit" asp-route-id="@unit.HousingUnitId" class="btn btn-primary">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

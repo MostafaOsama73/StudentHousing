@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Shared.Enums;
 
+/// <summary>
+/// Enum representing the availability status of a property
+/// </summary>
 public enum PropertyStatus
 {
+    /// <summary>
+    /// Property is available for booking
+    /// </summary>
     Available,
-    Rented,
-    UnderMaintenance 
+
+    /// <summary>
+    /// Property is currently booked
+    /// </summary>
+    Booked
 }

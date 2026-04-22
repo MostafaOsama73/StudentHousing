@@ -1,17 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Shared.Enums;
 
+/// <summary>
+/// Enum representing the approval status of a user account
+/// </summary>
 public enum UserStatus
 {
-    Active,
-    Approved,
+    /// <summary>
+    /// User account is pending approval by Admin
+    /// </summary>
     Pending,
-    Inactive,
-    Rejected,
-    Suspended
+
+    /// <summary>
+    /// User account has been approved and has full access
+    /// </summary>
+    Approved,
+
+    /// <summary>
+    /// User account has been rejected and access is denied
+    /// </summary>
+    Rejected
 }

@@ -1,0 +1,101 @@
+@model Domain.Entities.HousingUnit
+
+@{
+    ViewData["Title"] = "Edit Unit";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Edit Housing Unit</h1>
+        <a asp-action="MyUnits" class="btn btn-secondary">Back to My Units</a>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["Message"]
+        </div>
+    }
+
+    <div class="card shadow">
+        <div class="card-body">
+            <form asp-action="EditUnit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="HousingUnitId" />
+                <input type="hidden" asp-for="LandLordId" />
+
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label">Title</label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Price" class="form-label">Price ($/month)</label>
+                        <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Area" class="form-label">Area</label>
+                        <input asp-for="Area" class="form-control" />
+                        <span asp-validation-for="Area" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="City" class="form-label">City</label>
+                        <input asp-for="City" class="form-control" />
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Address" class="form-label">Address</label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Rules" class="form-label">Rules</label>
+                    <textarea asp-for="Rules" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Rules" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="UnitImageUrl" class="form-label">Image URL</label>
+                    <input asp-for="UnitImageUrl" class="form-control" />
+                    <span asp-validation-for="UnitImageUrl" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AvailabilityStatus" class="form-label">Availability Status</label>
+                    <select asp-for="AvailabilityStatus" class="form-select">
+                        <option value="0">Available</option>
+                        <option value="1">Booked</option>
+                    </select>
+                    <span asp-validation-for="AvailabilityStatus" class="text-danger"></span>
+                </div>
+
+                <div class="alert alert-warning">
+                    <strong>Note:</strong> Changing unit information (title, description, price, location, rules) will set your account to pending status and require admin approval.
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Update Unit</button>
+                    <a asp-action="MyUnits" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
