@@ -67,10 +67,17 @@ public class AdminController : Controller
 
         // Admin can edit everything without restrictions
         user.UserName = viewModel.UserName;
+        user.Email = viewModel.Email;
         user.PhoneNumber = viewModel.PhoneNumber;
         user.ProfileImage = viewModel.ProfileImage;
 
-        await _userManager.UpdateAsync(user);
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            ModelState.AddModelError(string.Empty, $"Failed to update profile: {errors}");
+            return View(viewModel);
+        }
 
         TempData["Message"] = "Profile updated successfully.";
         return RedirectToAction(nameof(Profile));
@@ -88,6 +95,15 @@ public class AdminController : Controller
             pageNumber,
             pageSize,
             search);
+
+        // Load User navigation properties for each student to access Status and Email
+        foreach (var student in students)
+        {
+            if (!string.IsNullOrEmpty(student.UserId))
+            {
+                student.User = await _userManager.FindByIdAsync(student.UserId);
+            }
+        }
 
         var viewModel = new AdminStudentViewModel
         {
@@ -179,6 +195,44 @@ public class AdminController : Controller
         return RedirectToAction(nameof(Students));
     }
 
+    // GET: Admin/ApproveStudent/5
+    public async Task<IActionResult> ApproveStudent(Guid id)
+    {
+        var student = await _studentRepository.GetAsync(id);
+        if (student == null)
+        {
+            return NotFound();
+        }
+
+        var user = await _userManager.FindByIdAsync(student.UserId);
+        if (user != null)
+        {
+            user.Status = Shared.Enums.UserStatus.Approved;
+            await _userManager.UpdateAsync(user);
+        }
+
+        return RedirectToAction(nameof(Students));
+    }
+
+    // GET: Admin/RejectStudent/5
+    public async Task<IActionResult> RejectStudent(Guid id)
+    {
+        var student = await _studentRepository.GetAsync(id);
+        if (student == null)
+        {
+            return NotFound();
+        }
+
+        var user = await _userManager.FindByIdAsync(student.UserId);
+        if (user != null)
+        {
+            user.Status = Shared.Enums.UserStatus.Rejected;
+            await _userManager.UpdateAsync(user);
+        }
+
+        return RedirectToAction(nameof(Students));
+    }
+
     #endregion
 
     #region Landlord Management
@@ -190,8 +244,9 @@ public class AdminController : Controller
         string? search = null)
     {
         var landlords = _landLordRepository.GetAll(asNoTracking: true);
-        
-        if (!string.IsNullOrWhiteSpace(search))
+
+        // Apply search filter if provided
+        if (!string.IsNullOrEmpty(search))
         {
             landlords = landlords.Where(l =>
                 l.CompanyName.Contains(search) ||
@@ -199,14 +254,22 @@ public class AdminController : Controller
         }
 
         var totalCount = landlords.Count();
-        var pagedLandlords = landlords
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
+
+        // Apply pagination
+        landlords = landlords.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+        // Load User navigation properties for each landlord to access Status and Email
+        foreach (var landlord in landlords)
+        {
+            if (!string.IsNullOrEmpty(landlord.UserId))
+            {
+                landlord.User = await _userManager.FindByIdAsync(landlord.UserId);
+            }
+        }
 
         var viewModel = new AdminLandlordViewModel
         {
-            Landlords = pagedLandlords,
+            Landlords = landlords,
             CurrentPage = pageNumber,
             PageSize = pageSize,
             TotalCount = totalCount,
@@ -241,6 +304,7 @@ public class AdminController : Controller
         var user = await _userManager.FindByIdAsync(landlord.UserId);
         if (user != null)
         {
+            user.Status = Shared.Enums.UserStatus.Approved;
             user.IsActive = true;
             await _userManager.UpdateAsync(user);
         }
@@ -264,6 +328,7 @@ public class AdminController : Controller
         var user = await _userManager.FindByIdAsync(landlord.UserId);
         if (user != null)
         {
+            user.Status = Shared.Enums.UserStatus.Rejected;
             user.IsActive = false;
             await _userManager.UpdateAsync(user);
         }
